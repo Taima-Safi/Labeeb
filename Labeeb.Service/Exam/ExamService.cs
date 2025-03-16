@@ -1,6 +1,8 @@
 ﻿using Labeeb.Database.Model;
 using Labeeb.Dto.Dto;
+using Labeeb.Dto.Dto.Subject;
 using Labeeb.Dto.Shared;
+using Labeeb.Dto.Shared.Enum;
 using Labeeb.Dto.Shared.Exception;
 using Labeeb.Repository.Base;
 using Microsoft.EntityFrameworkCore;
@@ -11,18 +13,20 @@ namespace Labeeb.Service.Exam;
 public class ExamService : IExamService
 {
     private readonly IBaseRepo<QuestionModel> questionBaseRepo;
+    private readonly IBaseRepo<SubjectModel> subjectBaseRepo;
     private readonly IBaseRepo<ChoiceModel> choiceBaseRepo;
     private readonly IBaseRepo<ExamQuestionModel> examQuestionBaseRepo;
     private readonly IBaseRepo<ExamModel> examBaseRepo;
     private readonly IBaseRepo<LessonModel> lessonBaseRepo;
 
-    public ExamService(IBaseRepo<QuestionModel> questionBaseRepo, IBaseRepo<ChoiceModel> choiceBaseRepo, IBaseRepo<LessonModel> lessonBaseRepo, IBaseRepo<ExamModel> examBaseRepo, IBaseRepo<ExamQuestionModel> examQuestionBaseRepo)
+    public ExamService(IBaseRepo<QuestionModel> questionBaseRepo, IBaseRepo<ChoiceModel> choiceBaseRepo, IBaseRepo<LessonModel> lessonBaseRepo, IBaseRepo<ExamModel> examBaseRepo, IBaseRepo<ExamQuestionModel> examQuestionBaseRepo, IBaseRepo<SubjectModel> subjectBaseRepo)
     {
         this.questionBaseRepo = questionBaseRepo;
         this.choiceBaseRepo = choiceBaseRepo;
         this.lessonBaseRepo = lessonBaseRepo;
         this.examBaseRepo = examBaseRepo;
         this.examQuestionBaseRepo = examQuestionBaseRepo;
+        this.subjectBaseRepo = subjectBaseRepo;
     }
 
     #region Question  
@@ -111,6 +115,43 @@ public class ExamService : IExamService
 
             await examQuestionBaseRepo.AddListAsync(examQuestions);
         }
+    }
+    public async Task<List<SubjectDto>> GetAllSubjectExamAsync(GradeType grade)
+    {
+        Expression<Func<SubjectModel, bool>> expression = q => q.Grade == grade && q.IsValid;
+
+        var result = await subjectBaseRepo.GetAllAsync(expression, x => x.Include(x => x.Exams));
+
+        return result.OrderBy(x => x.Id).Select(r => new SubjectDto
+        {
+            Id = r.Id,
+            Title = r.Title,
+            Exams = r.Exams.Select(e => new ExamDto
+            {
+                Id = e.Id,
+                Title = e.Title
+            }).ToList()
+        }).ToList();
+    }
+    public async Task<List<QuestionDto>> GetExamAsync(long examId)
+    {
+        Expression<Func<ExamQuestionModel, bool>> expression = q => q.ExamId == examId && q.IsValid;
+
+        var result = await examQuestionBaseRepo.GetAllAsync(expression, x => x.Include(x => x.Question).ThenInclude(x => x.Choices));
+
+        return result.Select(r => new QuestionDto
+        {
+            Id = r.Id,
+            Title = r.Question.Title,
+            Level = r.Question.Level,
+            IsTrue = r.Question.IsTrue,
+            Choices = r.Question.Choices.Select(c => new ChoiceDto
+            {
+                Id = c.Id,
+                Title = c.Title,
+                IsTrue = c.IsTrue
+            }).ToList()
+        }).ToList();
     }
     #endregion
 }

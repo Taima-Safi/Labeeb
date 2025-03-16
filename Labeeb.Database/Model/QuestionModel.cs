@@ -11,4 +11,5 @@ public class QuestionModel : BaseModel
     public long LessonId { get; set; }
     public LessonModel Lesson { get; set; }
     public ICollection<ChoiceModel> Choices { get; set; }
+    public ICollection<ExamQuestionModel> ExamQuestions { get; set; }
 }

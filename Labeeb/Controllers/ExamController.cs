@@ -1,5 +1,6 @@
 ﻿using Labeeb.Dto.Dto;
 using Labeeb.Dto.Shared;
+using Labeeb.Dto.Shared.Enum;
 using Labeeb.Service.Exam;
 using Microsoft.AspNetCore.Mvc;
 
@@ -40,6 +41,19 @@ namespace Labeeb.Controllers
         {
             await examService.AddExamAsync(title, questionIds);
             return Ok();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetAllSubjectExam(GradeType grade)
+
+        {
+            var result = await examService.GetAllSubjectExamAsync(grade);
+            return Ok(result);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetExam(long examId)
+        {
+            var result = await examService.GetExamAsync(examId);
+            return Ok(result);
         }
     }
 }
