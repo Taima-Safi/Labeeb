@@ -3,6 +3,7 @@ using Labeeb.Repository.Base;
 using Labeeb.Service.Exam;
 using Labeeb.Service.Subject;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,7 @@ builder.Services.AddSwaggerGen();
 
 
 #region Database
-var connectionString = builder.Configuration.GetConnectionString(builder.Environment.IsProduction() ? "Server" : "Server");
+var connectionString = builder.Configuration.GetConnectionString(builder.Environment.IsProduction() ? "SomeeServer" : "SomeeServer");
 builder.Services.AddDbContext<LabeebDbContext>(options =>
 {
     options.UseSqlServer(connectionString);
@@ -35,14 +36,31 @@ builder.Services.AddScoped<IExamService, ExamService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//app.UseSwagger();
+//app.UseSwaggerUI();
+//}
+app.UseCors(cors => cors
+.AllowAnyMethod()
+.AllowAnyHeader()
+.SetIsOriginAllowed(origin => true)
+.AllowCredentials());
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseSwagger();
 
+app.UseSwagger();
+app.UseSwaggerUI(s =>
+{
+    s.DocExpansion(DocExpansion.None);
+    s.DisplayRequestDuration();
+    s.EnableTryItOutByDefault();
+});
+app.UseRouting();
+
+app.UseSwaggerUI();
 app.UseAuthorization();
 
 app.MapControllers();

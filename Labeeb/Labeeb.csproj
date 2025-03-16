@@ -19,7 +19,9 @@
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
-
+	<PropertyGroup>
+		<AllowUntrustedCertificate>True</AllowUntrustedCertificate>
+	</PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Labeeb.Database\Labeeb.Database.csproj" />
     <ProjectReference Include="..\Labeeb.Dto\Labeeb.Dto.csproj" />

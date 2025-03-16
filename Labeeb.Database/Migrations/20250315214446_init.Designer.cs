@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Labeeb.Database.Migrations
 {
     [DbContext(typeof(LabeebDbContext))]
-    [Migration("20250314173646_QuestionChoiceModel")]
-    partial class QuestionChoiceModel
+    [Migration("20250315214446_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
