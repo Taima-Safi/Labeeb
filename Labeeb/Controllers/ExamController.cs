@@ -28,5 +28,18 @@ namespace Labeeb.Controllers
             var result = await examService.GetQuestionsAsync(lessonIds, level);
             return Ok(result);
         }
+        [HttpPost]
+        public async Task<IActionResult> AddManualExam(string title, List<long> lessonIds, QuestionLevel level)
+        {
+            await examService.AddManualExamAsync(title, lessonIds, level);
+            return Ok();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddExamAsync(string title, List<long> questionIds)
+
+        {
+            await examService.AddExamAsync(title, questionIds);
+            return Ok();
+        }
     }
 }

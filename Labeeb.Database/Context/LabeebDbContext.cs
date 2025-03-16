@@ -13,6 +13,8 @@ public class LabeebDbContext : DbContext
     public DbSet<ChoiceModel> Choice { get; set; }
     public DbSet<SubjectModel> Subject { get; set; }
     public DbSet<QuestionModel> Question { get; set; }
+    public DbSet<ExamModel> Exam { get; set; }
+    public DbSet<ExamQuestionModel> ExamQuestion { get; set; }
     protected override void OnModelCreating(ModelBuilder builder) // for relations
     {
         base.OnModelCreating(builder);

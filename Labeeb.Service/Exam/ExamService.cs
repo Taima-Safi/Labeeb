@@ -12,13 +12,17 @@ public class ExamService : IExamService
 {
     private readonly IBaseRepo<QuestionModel> questionBaseRepo;
     private readonly IBaseRepo<ChoiceModel> choiceBaseRepo;
+    private readonly IBaseRepo<ExamQuestionModel> examQuestionBaseRepo;
+    private readonly IBaseRepo<ExamModel> examBaseRepo;
     private readonly IBaseRepo<LessonModel> lessonBaseRepo;
 
-    public ExamService(IBaseRepo<QuestionModel> questionBaseRepo, IBaseRepo<ChoiceModel> choiceBaseRepo, IBaseRepo<LessonModel> lessonBaseRepo)
+    public ExamService(IBaseRepo<QuestionModel> questionBaseRepo, IBaseRepo<ChoiceModel> choiceBaseRepo, IBaseRepo<LessonModel> lessonBaseRepo, IBaseRepo<ExamModel> examBaseRepo, IBaseRepo<ExamQuestionModel> examQuestionBaseRepo)
     {
         this.questionBaseRepo = questionBaseRepo;
         this.choiceBaseRepo = choiceBaseRepo;
         this.lessonBaseRepo = lessonBaseRepo;
+        this.examBaseRepo = examBaseRepo;
+        this.examQuestionBaseRepo = examQuestionBaseRepo;
     }
 
     #region Question  
@@ -65,6 +69,48 @@ public class ExamService : IExamService
                 IsTrue = c.IsTrue
             }).ToList()
         }).ToList();
+    }
+    #endregion
+
+    #region Exam
+    public async Task AddExamAsync(string title, List<long> questionIds)
+    {
+        var examModel = await examBaseRepo.AddAsync(new ExamModel
+        {
+            Title = title
+        });
+
+        if (questionIds.Any())
+        {
+            var examQuestions = questionIds.Select(c => new ExamQuestionModel
+            {
+                QuestionId = c,
+                ExamId = examModel.Id
+            }).ToList();
+
+            await examQuestionBaseRepo.AddListAsync(examQuestions);
+        }
+    }
+    public async Task AddManualExamAsync(string title, List<long> lessonIds, QuestionLevel level)
+    {
+        Expression<Func<QuestionModel, bool>> expression = q => lessonIds.Contains(q.LessonId) && q.Level == level && q.IsValid;
+        var result = await questionBaseRepo.GetAllAsync(expression, x => x.Include(x => x.Choices));
+
+        var examModel = await examBaseRepo.AddAsync(new ExamModel
+        {
+            Title = title
+        });
+
+        if (result.Any())
+        {
+            var examQuestions = result.Take(5).Select(c => new ExamQuestionModel
+            {
+                QuestionId = c.Id,
+                ExamId = examModel.Id
+            }).ToList();
+
+            await examQuestionBaseRepo.AddListAsync(examQuestions);
+        }
     }
     #endregion
 }
