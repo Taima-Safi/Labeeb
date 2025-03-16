@@ -15,10 +15,12 @@ public class BaseRepo<T> : IBaseRepo<T> where T : class
         this.context = context;
         Entity = context.Set<T>();
     }
-    public async Task AddAsync(T item)
+    public async Task<T> AddAsync(T item)
     {
-        await Entity.AddAsync(item);
+        var model = await Entity.AddAsync(item);
         await context.SaveChangesAsync();
+
+        return model.Entity;
     }
     public async Task AddListAsync(List<T> items)
     {

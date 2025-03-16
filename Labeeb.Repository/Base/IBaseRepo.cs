@@ -7,7 +7,7 @@ namespace Labeeb.Repository.Base;
 
 public interface IBaseRepo<T> where T : class
 {
-    Task AddAsync(T item);
+    Task<T> AddAsync(T item);
     Task AddListAsync(List<T> items);
     Task<bool> CheckIfExistAsync(Expression<Func<T, bool>> expression);
     Task<List<T>> GetAllAsync(Expression<Func<T, bool>> expression, params Func<IQueryable<T>, IQueryable<T>>[] includes);

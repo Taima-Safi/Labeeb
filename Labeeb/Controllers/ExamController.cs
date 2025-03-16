@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Labeeb.Dto.Dto;
+using Labeeb.Dto.Shared;
+using Labeeb.Service.Exam;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Labeeb.Controllers
 {
@@ -6,5 +9,24 @@ namespace Labeeb.Controllers
     [ApiController]
     public class ExamController : ControllerBase
     {
+        private readonly IExamService examService;
+
+        public ExamController(IExamService examService)
+        {
+            this.examService = examService;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddQuestion(QuestionFormDto dto)
+        {
+            await examService.AddQuestionAsync(dto);
+            return Ok();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetQuestionsByLessonIds(List<long> lessonIds, QuestionLevel level)
+        {
+            var result = await examService.GetQuestionsAsync(lessonIds, level);
+            return Ok(result);
+        }
     }
 }
