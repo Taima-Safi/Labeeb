@@ -23,7 +23,7 @@ namespace Labeeb.Controllers
             return Ok();
         }
         [HttpGet]
-        public async Task<IActionResult> GetQuestionsByLessonIds(List<long> lessonIds, QuestionLevel level)
+        public async Task<IActionResult> GetQuestionsByLessonIds([FromQuery] List<long> lessonIds, [FromQuery] QuestionLevel level)
         {
             var result = await examService.GetQuestionsAsync(lessonIds, level);
             return Ok(result);
