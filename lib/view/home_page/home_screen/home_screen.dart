@@ -202,7 +202,7 @@ class HomeScreen extends StatelessWidget {
                     final subject = controller.subjects[index];
 
                     return Customsubject(
-                      subjectname: subject.title ?? 'null',
+                      subjectname: subject.title,
                       pagename: () {
                         Get.to(SubjectScreen(subjectId: subject.id));
                       },
