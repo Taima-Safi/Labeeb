@@ -179,6 +179,38 @@ DocProject/Help/html
 # Click-Once directory
 publish/
 
+# .gitignore
+appsettings.json
+
+# Flutter
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+pubspec.lock
+build/
+
+# Android
+*.iml
+.idea/
+.gradle/
+local.properties
+
+# iOS
+**/ios/**/Pods/
+**/ios/**/Podfile.lock
+**/ios/**/xcuserdata/
+**/ios/**/DerivedData/
+**/ios/**/build/
+
+# macOS
+**/macos/**/Flutter/ephemeral/
+**/macos/**/Flutter/GeneratedPluginRegistrant.swift
+
+# Miscellaneous
+.DS_Store
+*.log
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
